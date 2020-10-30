@@ -6,7 +6,7 @@ Roger Huba
 Robert Huba
 
 ## Version
-1.0.0 - Intial Setup
+1.0.0 - Initial Setup
 
 ## Libraries and Frameworks
 - Python3

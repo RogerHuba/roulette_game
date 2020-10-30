@@ -1,8 +1,10 @@
 import random
+import sys
+from os import system
 
-
-plays = 1
-balance = input('Please Enter your starting balance: ')
+balance = 0
+plays = 0
+player_choice = ''
 
 
 def spins():
@@ -20,11 +22,45 @@ def spins():
 
     winning_number = int(random.choice(list(slots.keys())))
     winning_color = slots[str(winning_number)]
-    print(f'The winning number is {winning_number} and the winning color is {winning_color} in {plays} tries.')
 
     plays += 1
     return winning_number, winning_color
 
 
+def menu():
+    print(f'''
+    Your current balance is {balance}.
+    You have played {plays} time(s).
+    
+    1) Enter Account Balance
+    2) Place a bet
+    3) Play
+    q) Quit
+    ''')
+    menu_choice = input('What would you like to do? ')
+    return menu_choice
+
+
 if __name__ == '__main__':
-    winning_numbers = spins()
+    system('clear')
+    while not player_choice:
+        player_choice = menu()
+        if not player_choice:
+            player_choice = menu()
+        elif player_choice == 'q':
+            print('Thank you for playing!')
+            sys.exit()
+        elif int(player_choice) is 1:
+            balance = input('Please Enter your starting balance: ')
+            player_choice = ''
+        elif int(player_choice) is 2:
+            pass
+            player_choice = ''
+        elif int(player_choice) is 3:
+            winning_return = spins()
+            win_number = winning_return[0]
+            win_color = winning_return[1]
+            print(f'The winning number is {win_number} and the winning color is {win_color} in {plays} tries.')
+            player_choice = ''
+
+
