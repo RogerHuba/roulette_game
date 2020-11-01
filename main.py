@@ -16,9 +16,11 @@ def screen_clear():
     system('clear')
     return
 
+# TODO: Look into tracking everything in a object
+
 
 def spins():
-    global plays
+    global plays, message
     slots = {'00': 'green', '0': 'green', '1': 'red', '2': 'black', '3': 'red',
              '4': 'black', '5': 'red', '6': 'black', '7': 'red', '8': 'black',
              '9': 'red', '10': 'black', '11': 'red', '12': 'black', '13': 'red',
@@ -30,9 +32,11 @@ def spins():
 
     winning_number = int(random.choice(list(slots.keys())))
     winning_color = slots[str(winning_number)]
-    last_numbers.append(winning_number)
-    last_colors.append(winning_color)
-    if winning_number %2 == 0:
+    last_numbers.insert(0, winning_number)
+    del last_numbers[10:]
+    last_colors.insert(0, winning_color)
+    del last_colors[10:]
+    if winning_number % 2 == 0:
         winning_odd_even = 'even'
     else:
         winning_odd_even = 'odd'
@@ -47,6 +51,7 @@ def menu():
     1) Enter Account Balance
     2) Place a bet
     3) Play
+    4) Run Roger Algo (Not yet implemented)
     q) Quit
     ''')
     menu_choice = input('What would you like to do? ')
@@ -196,6 +201,9 @@ def place_bet():
                 elif (int(number_bet_amount) + int(total_bet)) > max_bet:
                     message = 'BET NOT PLACED! Exceeded Max bet'
                 else:
+                    money_on_number[number_to_add] = number_bet_amount
+                    bet_number.append(number_to_add)
+                    bet_number.sort()
                     total_bet += int(number_bet_amount)
                     balance = int(balance) - int(number_bet_amount)
                     message = f'Bet placed on {number_to_add}!'
@@ -208,31 +216,64 @@ def place_bet():
 
 def play_game():
     global last_colors, balance, red_bet_amount, total_bet, bet_red, bet_black, bet_green, bet_odd, \
-        bet_even, black_bet_amount, odd_bet_amount, even_bet_amount, message
+        bet_even, black_bet_amount, odd_bet_amount, even_bet_amount, message, number_bet_amount
     message = ''
     winning_return = spins()
     win_number, win_color, odd_even = winning_return[0], winning_return[1], winning_return[2]
     print('Win Color is: ' + win_color)
     # TODO: May need to do a check on the bet and then drill down
     # TODO: This function is doing to much.  Make a function for changing balances.
-    if win_color is 'red' and bet_red:
+    if win_color == 'red' and bet_red:
         balance = int(balance) + (int(red_bet_amount) * 2)
         message = 'You won on RED '
-    if win_color is 'black' and bet_black:
+    if win_color == 'black' and bet_black:
         balance = int(balance) + (int(black_bet_amount) * 2)
         message += 'You won on BLACK'
-    if odd_even is 'even' and bet_even:
+    if odd_even == 'even' and bet_even:
         balance = int(balance) + (int(even_bet_amount) * 2)
         message += 'You won on EVEN'
-    if odd_even is 'odd' and bet_odd:
+    if odd_even == 'odd' and bet_odd:
         balance = int(balance) + (int(odd_bet_amount) * 2)
         message += 'You won on ODD'
     if win_number in bet_number:
-        balance = int(balance) + (int(number_bet_amount) * 35)
+        balance = int(balance) + (number_bet_amount[win_number] * 35)
+        number_bet_amount = []
     # TODO: Add these individually to each win condition.
     red_bet_amount, black_bet_amount, odd_bet_amount, even_bet_amount, total_bet = 0, 0, 0, 0, 0
     bet_red, bet_black, bet_green, bet_odd, bet_even = False, False, False, False, False
     return
+
+
+def play_game_algo():
+    global bet_red, plays, total_bet, balance
+    play_since_win = 0
+    games_to_play = 100000
+    bet_red = True
+
+    while games_to_play > 0:
+        games_to_play -= 1
+        # 1st Play
+        if play_since_win == 0:
+            initial_value = 5
+            winning_return = spins()
+            win_color = winning_return[1]
+            if win_color == 'red':
+                play_since_win = 0
+                balance = int(balance) + int(initial_value)
+            elif win_color != 'red':
+                balance = int(balance) - int(initial_value)
+                play_since_win += 1
+        # 2nd Play through 7th play
+        elif play_since_win > 0:
+            initial_value = int(initial_value) * 2 + 5
+            winning_return = spins()
+            win_color = winning_return[1]
+            if win_color == 'red':
+                play_since_win = 0
+                balance = int(balance) + int(initial_value)
+            elif win_color != 'red':
+                balance = int(balance) - int(initial_value)
+                play_since_win += 1
 
 
 if __name__ == '__main__':
@@ -252,4 +293,7 @@ if __name__ == '__main__':
             player_choice = ''
         elif int(player_choice) == 3:
             play_game()
+            player_choice = ''
+        elif int(player_choice) == 4:
+            play_game_algo()
             player_choice = ''
