@@ -10,6 +10,9 @@ player_choice = ''
 message = 'Lets Play Roulette'
 max_bet = 500
 total_bet = 0
+total_red_numbers = 0
+total_black_numbers = 0
+total_green_numbers = 0
 
 
 def screen_clear():
@@ -51,7 +54,7 @@ def menu():
     1) Enter Account Balance
     2) Place a bet
     3) Play
-    4) Run Roger Algo (Not yet implemented)
+    4) Run Test Algo 10 Plays
     q) Quit
     ''')
     menu_choice = input('What would you like to do? ')
@@ -70,6 +73,17 @@ def adjust_balance():
 
 
 def print_screen():
+
+    if plays == 0:
+        percent_red = 1
+        percent_black = 1
+        percent_green = 1
+    else:
+        percent_red = total_red_numbers / plays * 100
+        percent_black = total_black_numbers / plays * 100
+        percent_green = total_green_numbers / plays * 100
+
+
     print(f'''
     Your current balance is {balance}.
     Your current bet is {total_bet}.
@@ -79,6 +93,9 @@ def print_screen():
     Current Numbers: {bet_number}
     Last 10 Numbers: {last_numbers}
     Last 10 Colors: {last_colors}
+    Total Red: {total_red_numbers} %{percent_red}
+    Total Black {total_black_numbers} %{percent_black}
+    Total Green {total_green_numbers} %{percent_green}
     MESSAGE: {message}
     ''')
     return
@@ -245,35 +262,104 @@ def play_game():
 
 
 def play_game_algo():
-    global bet_red, plays, total_bet, balance
+    global bet_red, plays, total_bet, balance, total_red_numbers, total_black_numbers, total_green_numbers
     play_since_win = 0
-    games_to_play = 100000
+    games_to_play = 1000000
     bet_red = True
 
     while games_to_play > 0:
         games_to_play -= 1
-        # 1st Play
-        if play_since_win == 0:
+        # 1st Play and 2nd Play
+        if play_since_win < 2:
             initial_value = 5
             winning_return = spins()
             win_color = winning_return[1]
             if win_color == 'red':
+                total_red_numbers += 1
                 play_since_win = 0
                 balance = int(balance) + int(initial_value)
             elif win_color != 'red':
+                if win_color == 'black':
+                    total_black_numbers += 1
+                elif win_color == 'green':
+                    total_green_numbers += 1
                 balance = int(balance) - int(initial_value)
                 play_since_win += 1
         # 2nd Play through 7th play
-        elif play_since_win > 0:
-            initial_value = int(initial_value) * 2 + 5
+        elif play_since_win == 2:
+            initial_value = 15
             winning_return = spins()
             win_color = winning_return[1]
             if win_color == 'red':
+                total_red_numbers += 1
                 play_since_win = 0
                 balance = int(balance) + int(initial_value)
             elif win_color != 'red':
+                if win_color == 'black':
+                    total_black_numbers += 1
+                elif win_color == 'green':
+                    total_green_numbers += 1
                 balance = int(balance) - int(initial_value)
                 play_since_win += 1
+        elif play_since_win == 3:
+            initial_value = 35
+            winning_return = spins()
+            win_color = winning_return[1]
+            if win_color == 'red':
+                total_red_numbers += 1
+                play_since_win = 0
+                balance = int(balance) + int(initial_value)
+            elif win_color != 'red':
+                if win_color == 'black':
+                    total_black_numbers += 1
+                elif win_color == 'green':
+                    total_green_numbers += 1
+                balance = int(balance) - int(initial_value)
+                play_since_win += 1
+        elif play_since_win == 4:
+            initial_value = 80
+            winning_return = spins()
+            win_color = winning_return[1]
+            if win_color == 'red':
+                total_red_numbers += 1
+                play_since_win = 0
+                balance = int(balance) + int(initial_value)
+            elif win_color != 'red':
+                if win_color == 'black':
+                    total_black_numbers += 1
+                elif win_color == 'green':
+                    total_green_numbers += 1
+                balance = int(balance) - int(initial_value)
+                play_since_win += 1
+        elif play_since_win == 5:
+            initial_value = 180
+            winning_return = spins()
+            win_color = winning_return[1]
+            if win_color == 'red':
+                total_red_numbers += 1
+                play_since_win = 0
+                balance = int(balance) + int(initial_value)
+            elif win_color != 'red':
+                if win_color == 'black':
+                    total_black_numbers += 1
+                elif win_color == 'green':
+                    total_green_numbers += 1
+                balance = int(balance) - int(initial_value)
+                play_since_win += 1
+        elif play_since_win == 6:
+            initial_value = 360
+            winning_return = spins()
+            win_color = winning_return[1]
+            if win_color == 'red':
+                total_red_numbers += 1
+                balance = int(balance) + int(initial_value)
+            elif win_color != 'red':
+                if win_color == 'black':
+                    total_black_numbers += 1
+                elif win_color == 'green':
+                    total_green_numbers += 1
+                balance = int(balance) - int(initial_value)
+            play_since_win = 0
 
 
 if __name__ == '__main__':
